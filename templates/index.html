@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block site_wrapper %}
+{% include "navbar.html" %}
+<div class="main">
+    <table class="content">
+        <thead>
+            <th><h1>Due Date</h1></td>
+            <hr>
+            <th><h1>Task</h1></td>
+            <hr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>
+                    <p>
+                        {% if task.status == "Completed" %}
+                        <input type="checkbox" name="submit" value="Mark" checked/>
+                        {% else %}
+                        <input type="checkbox" name="submit" value="Mark"/>
+                        {% endif %}
+                        {{ task.due_date }}
+                    </p><hr>
+                </td>
+                <td class="each_task">
+                    <a href="{% url 'todo_app:task_detail' task.slug %}">
+                        <h1>{{ task.name | upper }}</h1>
+                        <p>Created on: {{task.date_added}}</p>
+                        <p>{{ task.description | linebreaks | slice:":50" }}</p>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </div>
+        
+    </table>
+    <div class="form">
+        <div>
+            <form method="post" action=".">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <br />
+                <input type="submit" name="submit" value="Add A Task"/>
+            </form>
+        </div>    
+    </div>
+</div>
+
+<div id="related_task">
+    {% if completed_list %}
+    <h2 id="completed">COMPLETED TASKS</h2>
+    <table id="related_table">
+        <thead>
+            <th><h1>Due Date</h1></td>
+            <hr>
+            <th><h1>Task</h1></td>
+            <hr>
+        </thead> 
+        <tbody>
+        {% for tasks in completed_list %}
+            <tr>
+                {% if tasks.slug != task.slug %}
+                <td>
+                    <p>
+                        {% if tasks.status == "Completed" %}
+                            <input type="checkbox" name="submit" value="Mark" checked/>
+                        {% else %}
+                            <input type="checkbox" name="submit" value="Mark"/>
+                        {% endif %}
+                        {{ task.due_date }}
+                    </p><hr>
+                </td>
+                <td class="each_task">
+                    <a href="{% url 'todo_app:task_detail' tasks.slug %}">
+                        <h1>{{ tasks.name | upper }}</h1>
+                        <p>Created on: {{tasks.date_added}}</p>
+                        <p>{{ tasks.description | linebreaks | slice:":50" }}</p>
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </div>
+    </table>
+    {% else %}
+    {% endif %}
+</div>
+<div id="related_task">
+    {% if pending_list %}
+    <h2 id="pending"> PENDING TASKS</h2>
+    <table id="related_table">
+        <thead>
+            <th><h1>Due Date</h1></td>
+            <hr>
+            <th><h1>Task</h1></td>
+            <hr>
+        </thead>
+        <tbody>
+        {% for tasks in pending_list %}
+            <tr>
+                {% if tasks.slug != task.slug %}
+                <td>
+                    <p><input type="checkbox" name="submit" value="Mark"/></p><hr>
+                </td>
+                <td class="each_task">
+                    <a href="{% url 'todo_app:task_detail' tasks.slug %}">
+                        <h1>{{ tasks.name | upper }}</h1>
+                        <p>Created on: {{tasks.date_added}}</p>
+                        <p>{{ tasks.description | linebreaks | slice:":50" }}</p>
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </div>
+        
+    </table>
+    {% else %}
+    {% endif %}
+</div>
+{% endblock %}

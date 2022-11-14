@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block site_wrapper %}
+{% include "navbar.html" %}
+<div class="main">
+    <div class="content">
+        <h1>{{ task.name | upper }}
+            {% if task.status == "Completed" %}
+                <input type="checkbox" name="submit" value="Mark" checked/>
+            {% else %}
+                <input type="checkbox" name="submit" value="Mark"/>
+            {% endif %}
+        </h1>
+        <p>Was created on: <em>{{task.date_added}}</em>, and will be Due on: <em>{{task.due_date}}</em></p>
+        <br/><br/>
+        <h3>Task Description</h3>
+        <p>{{task.description | linebreaks }}</p>
+        <form method="post" action="{% url 'todo_app:task_detail' task.slug %}" class="cart">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ task.id }}" />
+            <input type="submit" name="submit" value="Remove" />
+        </form>
+        <form method="post" action="{% url 'todo_app:change_status' task.slug %}">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ task.id }}" />
+            <input type="submit" name="submit" value="Completed" />
+        </form>
+    </div>
+    
+    <div class="form">
+        <form method="post" action="{% url 'todo_app:task_detail' task.slug %}" class="cart">
+            {% csrf_token %}
+            <label for="title">Title:<input type="text" name="title" value="{{ task.name }}" /></label>
+            <label for="description">Description:<input type="textarea" name="description" value="{{ task.description }}" /></label>
+            <label for="due_date">Due Date:<input type="date" name="due_date" value="{{ task.due_date }}" /></label>
+            <input type="hidden" name="item_id" value="{{ task.id }}" />
+            
+            <input type="submit" name="submit" value="Update" />
+        </form>
+    </div>
+</div>    
+<div id="related_task">
+    {% if tasks %}
+    {% else %}
+        <h2>Other Tasks</h2>
+    {% endif %}
+    <table id="related_table">
+        <thead>
+            <th><h1>Due Date</h1></td>
+            <hr>
+            <th><h1>Task</h1></td>
+            <hr>
+        </thead>
+        
+        
+        
+        <tbody>
+        {% for tasks in tasks %}
+            <tr>
+                {% if tasks.slug != task.slug %}
+                <td><p>{{ tasks.due_date }}</p><hr></td>
+                <td class="each_task">
+                    <a href="{% url 'todo_app:task_detail' tasks.slug %}">
+                        <h1>{{ tasks.name | upper }}</h1>
+                        <p>Created on: {{tasks.date_added}}</p>
+                        <p>{{ tasks.description | linebreaks | slice:":50" }}</p>
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </div>
+        
+    </table>
+    
+</div>    
+
+{% endblock %}

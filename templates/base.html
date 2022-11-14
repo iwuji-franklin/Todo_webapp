@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DID XHTML 1.0 Strict//EN" "XHTML-s.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link rel="Stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>
+            {% block title %}{% if page_title %}{{ page_title }} - {% endif %}
+            {{site_name}} {% endblock %} 
+        </title>
+        <meta name="Keywords" content="{{meta_keywords}}" />
+        <meta name="description" content="{{meta_description}}" />
+    </head>
+    <body>
+        {% block site_wrapper %}{% endblock %}
+    </body>
+</html>
